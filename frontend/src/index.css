@@ -1,0 +1,189 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── Dark Theme (default) ─────────────────────────────────────── */
+:root, html, html.dark {
+  color-scheme: dark;
+}
+
+html.light {
+  color-scheme: light;
+}
+
+@layer base {
+  body {
+    @apply font-sans antialiased min-h-screen;
+    transition: background-color 0.25s ease, color 0.25s ease;
+  }
+  html.dark body  { @apply bg-navy-950 text-slate-100; }
+  html.light body { background-color: #f1f5f9; color: #0f172a; }
+}
+
+@layer components {
+  /* Card base — switches with theme */
+  .sv-card {
+    backdrop-filter: blur(8px);
+    border-width: 1px;
+    border-style: solid;
+  }
+  html.dark  .sv-card { background-color: rgba(15,23,42,0.7); border-color: rgba(30,41,59,0.8); }
+  html.light .sv-card { background-color: #ffffff; border-color: #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+
+  /* Navbar */
+  html.dark  header.sv-nav { background-color: rgba(9,13,22,0.85); border-bottom-color: #1e293b; }
+  html.light header.sv-nav { background-color: rgba(255,255,255,0.95); border-bottom-color: #e2e8f0; }
+
+  /* Layout root */
+  html.dark  .sv-layout { background-color: #090d16; }
+  html.light .sv-layout { background-color: #f1f5f9; }
+
+  /* Sidebar */
+  html.dark  .sv-sidebar { background-color: rgba(9,13,22,0.95); border-right-color: #1e293b; }
+  html.light .sv-sidebar { background-color: #ffffff; border-right-color: #e2e8f0; }
+}
+
+/* ════════════════════════════════════════════════════════════
+   LIGHT MODE — Override every dark Tailwind class used in
+   this project so we don't need to touch individual files.
+   ════════════════════════════════════════════════════════════ */
+
+/* ── Backgrounds ──────────────────────────────────────────── */
+html.light .bg-navy-950,
+html.light .bg-navy-900,
+html.light .bg-navy-850,
+html.light .bg-navy-800            { background-color: #f8fafc !important; }
+
+html.light .bg-slate-950           { background-color: #f1f5f9 !important; }
+html.light .bg-slate-900           { background-color: #ffffff !important; }
+html.light .bg-slate-800           { background-color: #e2e8f0 !important; }
+html.light .bg-slate-700           { background-color: #cbd5e1 !important; }
+
+/* gradient hero card */
+html.light .bg-gradient-to-br.from-navy-900,
+html.light [class*="from-navy-900"]  { background: linear-gradient(135deg,#f0fdf4,#f8fafc) !important; }
+
+/* Opacity variants */
+html.light .bg-slate-900\/80,
+html.light .bg-slate-900\/90,
+html.light .bg-slate-900\/95       { background-color: rgba(255,255,255,0.96) !important; }
+html.light .bg-navy-950\/80,
+html.light .bg-navy-950\/95        { background-color: rgba(248,250,252,0.96) !important; }
+html.light .bg-navy-900\/90        { background-color: rgba(240,249,244,0.9) !important; }
+html.light .bg-slate-800\/60,
+html.light .bg-slate-850           { background-color: rgba(226,232,240,0.6) !important; }
+
+/* ── Text ─────────────────────────────────────────────────── */
+html.light .text-white             { color: #0f172a !important; }
+html.light .text-slate-100         { color: #1e293b !important; }
+html.light .text-slate-200         { color: #334155 !important; }
+html.light .text-slate-300         { color: #475569 !important; }
+html.light .text-slate-400         { color: #64748b !important; }
+html.light .text-slate-500         { color: #94a3b8 !important; }
+
+/* ── Borders ──────────────────────────────────────────────── */
+html.light .border-slate-800,
+html.light .border-slate-800\/80,
+html.light .border-slate-800\/40   { border-color: #e2e8f0 !important; }
+html.light .border-slate-700       { border-color: #cbd5e1 !important; }
+
+/* ── Hover states ─────────────────────────────────────────── */
+html.light .hover\:text-slate-100:hover  { color: #0f172a !important; }
+html.light .hover\:text-slate-200:hover  { color: #1e293b !important; }
+html.light .hover\:bg-slate-800\/60:hover{ background-color: rgba(226,232,240,0.8) !important; }
+
+/* ── Sidebar ──────────────────────────────────────────────── */
+html.light aside,
+html.light .sidebar-bg             {
+  background-color: #ffffff !important;
+  border-right-color: #e2e8f0 !important;
+}
+
+/* Nav links active state in light */
+html.light a[class*="bg-emerald-500/15"],
+html.light [class*="bg-emerald-500\/15"] {
+  background-color: rgba(16,185,129,0.12) !important;
+}
+
+/* ── Navbar ───────────────────────────────────────────────── */
+html.light header,
+html.light nav,
+html.light [class*="border-b border-slate-800"] {
+  border-bottom-color: #e2e8f0 !important;
+}
+
+/* ── Cards (the Card component uses bg-navy-900/bg-slate-900 ) */
+html.light .rounded-xl.border,
+html.light .rounded-2xl.border {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+}
+
+/* ── Inputs & Textareas ───────────────────────────────────── */
+html.light input,
+html.light textarea,
+html.light select {
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+}
+html.light input::placeholder,
+html.light textarea::placeholder { color: #94a3b8 !important; }
+html.light input:focus,
+html.light textarea:focus         { border-color: #10b981 !important; }
+
+/* ── Modal overlays ───────────────────────────────────────── */
+html.light [class*="bg-navy-950/80"],
+html.light .backdrop-blur-sm {
+  background-color: rgba(15,23,42,0.5) !important;
+}
+html.light [class*="fixed inset-0"] > div[class*="bg-"] {
+  background-color: #ffffff !important;
+}
+
+/* ── Progress bar tracks ──────────────────────────────────── */
+html.light .bg-slate-800.rounded-full { background-color: #e2e8f0 !important; }
+
+/* ── Quick-action mini cards ──────────────────────────────── */
+html.light a[class*="bg-slate-900.border"],
+html.light button[class*="bg-slate-900.border"],
+html.light [class*="p-3.5 rounded-xl bg-slate-900"] {
+  background-color: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+}
+html.light [class*="p-3.5 rounded-xl bg-slate-900"]:hover {
+  background-color: #f0fdf4 !important;
+  border-color: rgba(16,185,129,0.4) !important;
+}
+
+/* ── Audit log rows ───────────────────────────────────────── */
+html.light [class*="bg-slate-900/80.border"] {
+  background-color: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+}
+
+/* ── Toggle button border in sidebar ─────────────────────── */
+html.light .border-slate-700     { border-color: #cbd5e1 !important; }
+html.light .text-slate-400       { color: #64748b !important; }
+
+/* ── Recommendation rows ──────────────────────────────────── */
+html.light .text-slate-100.flex.items-center { color: #1e293b !important; }
+
+/* ── Footer status block ──────────────────────────────────── */
+html.light [class*="bg-navy-900/90"] {
+  background-color: #f0fdf4 !important;
+  border-color: #bbf7d0 !important;
+}
+
+/* ── Scrollbar ────────────────────────────────────────────── */
+html.light ::-webkit-scrollbar-track { background: #f1f5f9; }
+html.light ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+
+/* ─── Animations ────────────────────────────────────────────── */
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-slide-up {
+  animation: slideUp 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
