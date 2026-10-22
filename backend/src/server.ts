@@ -1,4 +1,6 @@
 import express, { Request, Response } from 'express';
+import path from 'path';
+import fs from 'fs';
 import helmet from 'helmet';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
@@ -66,13 +68,29 @@ app.get('/api/health', (req: Request, res: Response) => {
 // Master REST API routes
 app.use('/api', routes);
 
-// 404 Route Handler
-app.use('*', (req: Request, res: Response) => {
-  res.status(404).json({
-    success: false,
-    message: `API endpoint '${req.method} ${req.originalUrl}' not found.`,
+// Serve static frontend in production (Single-Service Unified Deployment)
+const frontendDistPath = path.resolve(__dirname, '../../frontend/dist');
+if (fs.existsSync(frontendDistPath)) {
+  app.use(express.static(frontendDistPath));
+  app.get('*', (req: Request, res: Response) => {
+    if (!req.originalUrl.startsWith('/api')) {
+      res.sendFile(path.join(frontendDistPath, 'index.html'));
+    } else {
+      res.status(404).json({
+        success: false,
+        message: `API endpoint '${req.method} ${req.originalUrl}' not found.`,
+      });
+    }
   });
-});
+} else {
+  // 404 Route Handler for API-only mode
+  app.use('*', (req: Request, res: Response) => {
+    res.status(404).json({
+      success: false,
+      message: `API endpoint '${req.method} ${req.originalUrl}' not found.`,
+    });
+  });
+}
 
 // Centralized Error Handler
 app.use(errorHandler);
