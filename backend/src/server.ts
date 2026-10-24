@@ -5,7 +5,7 @@ import helmet from 'helmet';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import { ENV } from './config/env';
-import { initDb } from './config/db';
+import { initDb, isDbConnected } from './config/db';
 import { apiLimiter } from './middleware/rateLimiter';
 import { errorHandler } from './middleware/errorHandler';
 import routes from './routes';
@@ -62,6 +62,7 @@ app.get('/api/health', (req: Request, res: Response) => {
     service: 'SecureVault Backend API',
     version: '1.0.0',
     environment: ENV.NODE_ENV,
+    database: isDbConnected() ? 'connected' : 'disconnected',
   });
 });
 
