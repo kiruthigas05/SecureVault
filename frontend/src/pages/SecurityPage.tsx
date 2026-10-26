@@ -20,10 +20,8 @@ import {
   Globe,
   Radio,
   Hourglass,
-  Flame,
   CalendarCheck,
   ArrowRight,
-  Shield,
 } from 'lucide-react';
 
 
@@ -253,68 +251,7 @@ export const SecurityPage: React.FC = () => {
         </div>
       </Card>
 
-      {/* Feature Comparison Matrix: SecureVault vs. Google Password Manager */}
-      <Card className="border-slate-800 space-y-4 bg-slate-900/40">
-        <div className="flex items-center gap-2.5 border-b border-slate-800 pb-3">
-          <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-400">
-            <Shield className="w-5 h-5" />
-          </div>
-          <div>
-            <h3 className="text-base font-bold text-white">Why SecureVault Outperforms Google Password Manager</h3>
-            <p className="text-xs text-slate-400">Direct architectural and security feature comparison</p>
-          </div>
-        </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs border-collapse">
-            <thead>
-              <tr className="border-b border-slate-800 text-slate-400 uppercase tracking-wider font-semibold">
-                <th className="py-2.5 px-3">Security Feature</th>
-                <th className="py-2.5 px-3">Google Password Manager</th>
-                <th className="py-2.5 px-3 text-emerald-400">SecureVault (Our Innovation)</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-800/60 font-medium">
-              <tr className="hover:bg-slate-800/20">
-                <td className="py-3 px-3 text-slate-200 font-bold">One-Time Ephemeral Secret Sharing</td>
-                <td className="py-3 px-3 text-rose-400/90">❌ None (Users leak passwords in plaintext WhatsApp/email)</td>
-                <td className="py-3 px-3 text-emerald-300 font-semibold flex items-center gap-1.5">
-                  <Flame className="w-3.5 h-3.5 text-orange-400" />
-                  Burn-After-Reading 1-view self-destructing links
-                </td>
-              </tr>
-              <tr className="hover:bg-slate-800/20">
-                <td className="py-3 px-3 text-slate-200 font-bold">Credential Aging & Rotation Alerts</td>
-                <td className="py-3 px-3 text-rose-400/90">❌ Passwords sit dormant for 3–5 years without warnings</td>
-                <td className="py-3 px-3 text-emerald-300 font-semibold">
-                  ✔ Real-time 90-day aging tracker with rotation enforcement
-                </td>
-              </tr>
-              <tr className="hover:bg-slate-800/20">
-                <td className="py-3 px-3 text-slate-200 font-bold">Mathematical Entropy Analysis</td>
-                <td className="py-3 px-3 text-rose-400/90">❌ Basic regex rule checks (fails against keyboard walks)</td>
-                <td className="py-3 px-3 text-emerald-300 font-semibold">
-                  ✔ True Shannon entropy in bits + pattern detection
-                </td>
-              </tr>
-              <tr className="hover:bg-slate-800/20">
-                <td className="py-3 px-3 text-slate-200 font-bold">Session Governance & Revocation</td>
-                <td className="py-3 px-3 text-rose-400/90">❌ Only global sign-out across all Google services</td>
-                <td className="py-3 px-3 text-emerald-300 font-semibold">
-                  ✔ Granular per-device session management with 1-click kill
-                </td>
-              </tr>
-              <tr className="hover:bg-slate-800/20">
-                <td className="py-3 px-3 text-slate-200 font-bold">Data Sovereignty & Architecture</td>
-                <td className="py-3 px-3 text-rose-400/90">❌ Proprietary Google cloud lock-in (Single Point of Failure)</td>
-                <td className="py-3 px-3 text-emerald-300 font-semibold">
-                  ✔ 100% self-hosted zero-knowledge with AES-256-GCM
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </Card>
 
       {/* Active Sessions Management Section */}
       <Card className="border-slate-800 space-y-4">

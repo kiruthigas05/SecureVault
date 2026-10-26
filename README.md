@@ -34,14 +34,14 @@ Credential stuffing, weak passwords, and database leakages represent over 80% of
 - **Stateful Session Governance & Instant Remote Revocation**: Device tracking in MongoDB and cached in Redis with instant token revoking.
 - **Simulated Recovery Workflow**: 15-minute expiring cryptographically random reset tokens in Redis with automatic invalidation of all existing sessions upon password reset.
 
-### Why SecureVault is Different from Google Password Manager
-| Security Feature | Google Password Manager | SecureVault (Our Innovation) |
+### Key Security Architecture Innovations
+| Security Feature | Traditional Password Managers | SecureVault Architecture |
 |---|---|---|
 | **One-Time Secret Sharing** | ❌ None (Users leak passwords in plaintext chats) | ✅ **Burn-After-Reading 1-View Links** with automatic server wipe |
 | **Password Aging & Stale Alerts** | ❌ Dormant passwords sit for years without warning | ✅ **Active 90-Day Aging Tracker** with rotation enforcement |
 | **Mathematical Entropy Analysis** | ❌ Basic regex rule checking (fails against patterns) | ✅ **Shannon Entropy in bits** + keyboard walk detection |
-| **Session Governance** | ❌ Only full Google account sign-out | ✅ **Granular per-device session management** with remote kill |
-| **Data Sovereignty** | ❌ Proprietary Big Tech cloud lock-in | ✅ **Self-hosted zero-knowledge** containerized MERN stack |
+| **Session Governance** | ❌ Only full account sign-out | ✅ **Granular per-device session management** with remote kill |
+| **Data Sovereignty** | ❌ Proprietary cloud lock-in | ✅ **Self-hosted zero-knowledge** containerized MERN stack |
 
 ---
 

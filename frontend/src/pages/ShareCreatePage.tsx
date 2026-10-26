@@ -238,33 +238,6 @@ export const ShareCreatePage: React.FC = () => {
         </Card>
       )}
 
-      {/* Feature Comparison Box (Google Password Manager vs SecureVault) */}
-      <Card className="p-5 border-slate-800 bg-slate-900/50 space-y-3">
-        <h3 className="text-sm font-bold text-slate-200 uppercase tracking-wider flex items-center gap-2">
-          <ShieldCheck className="w-4 h-4 text-emerald-400" />
-          Why This Sets SecureVault Apart from Google Password Manager
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
-          <div className="p-3 bg-slate-950/60 rounded-lg border border-slate-800">
-            <span className="font-semibold text-red-400 block mb-1">❌ Google Password Manager</span>
-            <p className="text-slate-400 leading-relaxed">
-              Has zero sharing capabilities. Users resort to copy-pasting passwords on WhatsApp, email, or chat, leaving permanent plaintext leaks.
-            </p>
-          </div>
-          <div className="p-3 bg-slate-950/60 rounded-lg border border-emerald-900/40">
-            <span className="font-semibold text-emerald-400 block mb-1">✔ SecureVault Burn-on-Read</span>
-            <p className="text-slate-300 leading-relaxed">
-              Provides single-use links backed by AES-256-GCM. The second the recipient reveals it, the secret is wiped from RAM forever.
-            </p>
-          </div>
-          <div className="p-3 bg-slate-950/60 rounded-lg border border-slate-800">
-            <span className="font-semibold text-amber-400 block mb-1">🛡️ Anti-Interception Defense</span>
-            <p className="text-slate-300 leading-relaxed">
-              Includes optional secondary passphrase protection so even if the link is intercepted, the secret cannot be decrypted.
-            </p>
-          </div>
-        </div>
-      </Card>
     </div>
   );
 };
