@@ -6,6 +6,7 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import { ENV } from './config/env';
 import { initDb, isDbConnected } from './config/db';
+import { seedDatabase } from './config/seed';
 import { apiLimiter } from './middleware/rateLimiter';
 import { errorHandler } from './middleware/errorHandler';
 import routes from './routes';
@@ -66,6 +67,23 @@ app.get('/api/health', (req: Request, res: Response) => {
   });
 });
 
+// Demo Seeding Endpoint (guarantees demo credentials exist in production)
+app.all(['/api/seed', '/api/auth/seed-demo'], async (req: Request, res: Response) => {
+  try {
+    await seedDatabase();
+    res.status(200).json({
+      success: true,
+      message: 'Demo account and sample credentials successfully seeded.',
+      data: {
+        email: 'demo@example.com',
+        password: 'DemoPassword123!',
+      },
+    });
+  } catch (err: any) {
+    res.status(500).json({ success: false, message: 'Seeding failed: ' + err.message });
+  }
+});
+
 // Master REST API routes
 app.use('/api', routes);
 
@@ -100,6 +118,9 @@ app.use(errorHandler);
 if (process.env.NODE_ENV !== 'test') {
   const startServer = async () => {
     await initDb();
+    if (isDbConnected()) {
+      await seedDatabase().catch((err) => console.warn('Auto-seed warning:', err.message));
+    }
     app.listen(ENV.PORT, () => {
       console.log(`====================================================`);
       console.log(`  SecureVault Backend API Server is running!`);

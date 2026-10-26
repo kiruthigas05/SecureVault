@@ -1,12 +1,10 @@
-import { initDb } from './db';
 import { User, Credential } from '../models';
 import { HashingService } from '../services/hashing.service';
 import { encryptionService } from '../services/encryption.service';
 import { AuditLoggerService } from '../services/auditLogger.service';
 
-async function seed() {
+export async function seedDatabase(): Promise<void> {
   console.log('--- Starting SecureVault Database Seeding (MongoDB / MERN) ---');
-  await initDb();
 
   const demoEmail = 'demo@example.com';
   const demoPassword = 'DemoPassword123!';
@@ -27,7 +25,15 @@ async function seed() {
     console.log(`Demo user created: ${demoEmail} (Password: ${demoPassword})`);
   } else {
     userId = user.id;
-    console.log(`Demo user already exists: ${demoEmail}`);
+    // Ensure the password hash matches DemoPassword123!
+    const isMatch = await HashingService.comparePassword(demoPassword, user.passwordHash);
+    if (!isMatch) {
+      user.passwordHash = await HashingService.hashPassword(demoPassword);
+      await user.save();
+      console.log(`Demo user password reset to: ${demoPassword}`);
+    } else {
+      console.log(`Demo user already exists: ${demoEmail}`);
+    }
   }
 
   // Sample credentials to showcase AES-256-GCM encryption & reuse detection
@@ -84,11 +90,17 @@ async function seed() {
   });
 
   console.log('--- Database Seeding Complete ---');
-  process.exit(0);
 }
 
-seed().catch((err) => {
-  console.error('Seeding failed:', err);
-  process.exit(1);
-});
+// Standalone CLI execution
+if (require.main === module) {
+  const { initDb } = require('./db');
+  initDb()
+    .then(() => seedDatabase())
+    .then(() => process.exit(0))
+    .catch((err: any) => {
+      console.error('Seeding failed:', err);
+      process.exit(1);
+    });
+}
 
