@@ -30,10 +30,11 @@ export const ShareViewPage: React.FC = () => {
   const [revealedData, setRevealedData] = useState<ShareRevealResponse | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  // Countdown & blur state
-  const VISIBLE_SECONDS = 2;
+  // Countdown, blur & anti-screenshot state
+  const VISIBLE_SECONDS = 30;
   const [countdown, setCountdown] = useState(VISIBLE_SECONDS);
   const [isBlurred, setIsBlurred] = useState(false);
+  const [screenshotAttempted, setScreenshotAttempted] = useState(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
@@ -57,6 +58,7 @@ export const ShareViewPage: React.FC = () => {
     if (!revealedData) return;
     setCountdown(VISIBLE_SECONDS);
     setIsBlurred(false);
+    setScreenshotAttempted(false);
     timerRef.current = setInterval(() => {
       setCountdown(prev => {
         if (prev <= 1) {
@@ -69,6 +71,39 @@ export const ShareViewPage: React.FC = () => {
     }, 1000);
     return () => clearInterval(timerRef.current!);
   }, [revealedData]);
+
+  // Anti-Screenshot & Screen Capture Protection
+  useEffect(() => {
+    if (!revealedData || isBlurred) return;
+
+    // 1. Detect PrintScreen or Print shortcut keys
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (
+        e.key === 'PrintScreen' ||
+        (e.ctrlKey && e.key === 'p') ||
+        (e.metaKey && e.shiftKey && (e.key === '3' || e.key === '4' || e.key === '5'))
+      ) {
+        setIsBlurred(true);
+        setScreenshotAttempted(true);
+        clearInterval(timerRef.current!);
+      }
+    };
+
+    // 2. Detect window blur (triggered when Snipping Tool, Win+Shift+S, or screen recorder opens)
+    const handleWindowBlur = () => {
+      setIsBlurred(true);
+      setScreenshotAttempted(true);
+      clearInterval(timerRef.current!);
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('blur', handleWindowBlur);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('blur', handleWindowBlur);
+    };
+  }, [revealedData, isBlurred]);
 
   const handleReveal = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
@@ -174,7 +209,7 @@ export const ShareViewPage: React.FC = () => {
                   {isBlurred ? 'Secret hidden — reload not possible' : 'Secret Content (read-only):'}
                 </span>
                 <span className="text-orange-400 font-semibold text-[11px] uppercase tracking-wide">
-                  🚫 Copy Disabled
+                  🚫 Copy & Screenshot Protected
                 </span>
               </div>
 
@@ -195,17 +230,25 @@ export const ShareViewPage: React.FC = () => {
 
                 {/* Overlay when blurred */}
                 {isBlurred && (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-slate-950/60 rounded-xl">
+                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-slate-950/80 backdrop-blur-md rounded-xl p-4 text-center">
                     <EyeOff className="w-8 h-8 text-red-400" />
-                    <span className="text-xs text-red-300 font-semibold">Secret Hidden</span>
-                    <span className="text-[11px] text-slate-500">Viewing window expired</span>
+                    <span className="text-xs text-red-300 font-semibold">
+                      {screenshotAttempted
+                        ? '🛡️ Screenshot Protection Triggered'
+                        : 'Secret Expired & Hidden'}
+                    </span>
+                    <span className="text-[11px] text-slate-400 max-w-xs">
+                      {screenshotAttempted
+                        ? 'Screen capture or window defocus was detected. The secret was instantly obscured for zero-trace security.'
+                        : 'The viewing window expired and the secret has been purged from memory.'}
+                    </span>
                   </div>
                 )}
               </div>
 
-              {/* No copy notice */}
+              {/* Security notice */}
               <p className="text-[11px] text-slate-500 text-center">
-                🔒 Copying, right-click and text selection are disabled for security.
+                🔒 Copying, text selection, and screen capture tools are censored for zero-trace security.
                 Read and memorize or type it manually.
               </p>
             </div>
