@@ -118,6 +118,7 @@ export interface MfaSetupData {
 export interface ShareCreatePayload {
   secret: string;
   expirationMinutes?: number;
+  expirationSeconds?: number;
   passphrase?: string;
   label?: string;
 }

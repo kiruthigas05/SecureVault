@@ -11,12 +11,19 @@ export const ShareCreatePage: React.FC = () => {
   const { showToast } = useToast();
   const [secret, setSecret] = useState('');
   const [label, setLabel] = useState('');
-  const [expirationMinutes, setExpirationMinutes] = useState(60);
+  const [expirationSeconds, setExpirationSeconds] = useState(3600);
   const [requirePassphrase, setRequirePassphrase] = useState(false);
   const [passphrase, setPassphrase] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [createdShare, setCreatedShare] = useState<ShareCreateResponse | null>(null);
   const [isCopied, setIsCopied] = useState(false);
+
+  const formatTtl = (sec: number) => {
+    if (sec < 60) return `${sec} seconds`;
+    if (sec < 3600) return `${Math.round(sec / 60)} minutes`;
+    if (sec < 86400) return `${Math.round(sec / 3600)} hour(s)`;
+    return `${Math.round(sec / 86400)} day(s)`;
+  };
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,7 +37,7 @@ export const ShareCreatePage: React.FC = () => {
       const result = await shareService.create({
         secret,
         label: label.trim() || undefined,
-        expirationMinutes,
+        expirationSeconds,
         passphrase: requirePassphrase ? passphrase : undefined,
       });
 
@@ -93,7 +100,7 @@ export const ShareCreatePage: React.FC = () => {
               <span>Secret Link (Valid for 1 view only):</span>
               <span className="text-amber-400 flex items-center gap-1">
                 <Clock className="w-3.5 h-3.5" />
-                Expires in {expirationMinutes} min
+                Expires in {formatTtl(expirationSeconds)}
               </span>
             </div>
 
@@ -179,15 +186,19 @@ export const ShareCreatePage: React.FC = () => {
                   Self-Destruct Lifetime
                 </label>
                 <select
-                  value={expirationMinutes}
-                  onChange={(e) => setExpirationMinutes(Number(e.target.value))}
+                  value={expirationSeconds}
+                  onChange={(e) => setExpirationSeconds(Number(e.target.value))}
                   className="w-full bg-slate-900 text-slate-100 text-sm px-3.5 py-2.5 rounded-xl border border-slate-700 focus:outline-none focus:border-emerald-500 transition-colors"
                 >
-                  <option value={5}>5 Minutes (Ultra-Fast Expire)</option>
-                  <option value={15}>15 Minutes</option>
-                  <option value={60}>1 Hour (Standard)</option>
-                  <option value={1440}>24 Hours (1 Day)</option>
-                  <option value={10080}>7 Days</option>
+                  <option value={2}>⚡ 2 Seconds (Ultra-Fast 2s Burn)</option>
+                  <option value={5}>⚡ 5 Seconds (Ultra-Fast 5s Flash)</option>
+                  <option value={30}>30 Seconds (Fast Burn)</option>
+                  <option value={60}>1 Minute</option>
+                  <option value={300}>5 Minutes</option>
+                  <option value={900}>15 Minutes</option>
+                  <option value={3600}>1 Hour (Standard)</option>
+                  <option value={86400}>24 Hours (1 Day)</option>
+                  <option value={604800}>7 Days</option>
                 </select>
                 <span className="text-[11px] text-slate-400 mt-1 block">
                   Link automatically self-destructs after this duration if unopened.

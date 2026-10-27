@@ -30,8 +30,8 @@ export const ShareViewPage: React.FC = () => {
   const [revealedData, setRevealedData] = useState<ShareRevealResponse | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  // Countdown, blur & anti-screenshot state
-  const VISIBLE_SECONDS = 30;
+  // Countdown, blur & anti-screenshot state (Ultra-Fast 5s auto-burn window)
+  const VISIBLE_SECONDS = 5;
   const [countdown, setCountdown] = useState(VISIBLE_SECONDS);
   const [isBlurred, setIsBlurred] = useState(false);
   const [screenshotAttempted, setScreenshotAttempted] = useState(false);

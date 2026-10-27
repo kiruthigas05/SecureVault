@@ -74,7 +74,8 @@ export const GeneratePasswordSchema = z.object({
 
 export const CreateShareSchema = z.object({
   secret: z.string().min(1, 'Secret is required').max(10000, 'Secret too large'),
-  expirationMinutes: z.number().int().min(1).max(10080).default(60), // default 1 hour, max 7 days
+  expirationMinutes: z.number().min(0.01).max(10080).optional(),
+  expirationSeconds: z.number().int().min(2).max(604800).optional(),
   passphrase: z.string().max(128).optional(),
   label: z.string().max(100).optional(),
 });

@@ -31,9 +31,13 @@ export class ShareController {
         passphraseHash = await HashingService.hashPassword(passphrase.trim());
       }
 
-      // Calculate TTL in seconds (bounded between 5 minutes and 7 days)
-      const clampedMinutes = Math.max(5, Math.min(Number(expirationMinutes) || 60, 10080));
-      const ttlSeconds = clampedMinutes * 60;
+      // Calculate TTL in seconds (supports 2s, 5s ultra-fast up to 7 days)
+      let ttlSeconds = 3600;
+      if (req.body.expirationSeconds !== undefined) {
+        ttlSeconds = Math.max(2, Math.min(Number(req.body.expirationSeconds) || 60, 604800));
+      } else if (expirationMinutes !== undefined) {
+        ttlSeconds = Math.max(2, Math.min(Math.round(Number(expirationMinutes) * 60) || 3600, 604800));
+      }
       const now = Date.now();
       const expiresAt = now + ttlSeconds * 1000;
 
