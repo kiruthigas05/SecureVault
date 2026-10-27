@@ -35,6 +35,7 @@ export const ShareViewPage: React.FC = () => {
   const [countdown, setCountdown] = useState(VISIBLE_SECONDS);
   const [isBlurred, setIsBlurred] = useState(false);
   const [screenshotAttempted, setScreenshotAttempted] = useState(false);
+  const [isHolding, setIsHolding] = useState(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
@@ -76,12 +77,16 @@ export const ShareViewPage: React.FC = () => {
   useEffect(() => {
     if (!revealedData || isBlurred) return;
 
-    // 1. Detect PrintScreen or Print shortcut keys
+    // 1. Detect any key press (Win, PrintScreen, Shift, Alt, Ctrl, etc.) to immediately conceal
     const handleKeyDown = (e: KeyboardEvent) => {
+      setIsHolding(false);
       if (
         e.key === 'PrintScreen' ||
+        e.key === 'Meta' ||
+        e.key === 'Control' ||
+        e.key === 'Alt' ||
         (e.ctrlKey && e.key === 'p') ||
-        (e.metaKey && e.shiftKey && (e.key === '3' || e.key === '4' || e.key === '5'))
+        (e.metaKey && e.shiftKey)
       ) {
         setIsBlurred(true);
         setScreenshotAttempted(true);
@@ -89,18 +94,25 @@ export const ShareViewPage: React.FC = () => {
       }
     };
 
+    const handleKeyUp = () => {
+      setIsHolding(false);
+    };
+
     // 2. Detect window blur (triggered when Snipping Tool, Win+Shift+S, or screen recorder opens)
     const handleWindowBlur = () => {
+      setIsHolding(false);
       setIsBlurred(true);
       setScreenshotAttempted(true);
       clearInterval(timerRef.current!);
     };
 
     window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
     window.addEventListener('blur', handleWindowBlur);
 
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
       window.removeEventListener('blur', handleWindowBlur);
     };
   }, [revealedData, isBlurred]);
@@ -213,24 +225,53 @@ export const ShareViewPage: React.FC = () => {
                 </span>
               </div>
 
-              {/* Secret Box — blur after countdown */}
+              {/* Secret Box with Hold-to-Reveal Anti-Capture */}
               <div
                 className={`relative w-full bg-slate-950 font-mono text-sm p-4 rounded-xl border
-                  min-h-[100px] leading-relaxed whitespace-pre-wrap break-all transition-all duration-700
+                  min-h-[110px] flex items-center justify-center leading-relaxed whitespace-pre-wrap break-all transition-all duration-300 select-none
                   ${isBlurred
-                    ? 'blur-md select-none text-emerald-400 border-red-800/40'
-                    : 'text-emerald-400 border-slate-700'}
+                    ? 'blur-md text-emerald-400 border-red-800/40 cursor-not-allowed'
+                    : isHolding
+                    ? 'border-emerald-500 bg-slate-950/90 text-emerald-300 ring-2 ring-emerald-500/20'
+                    : 'border-slate-800 hover:border-slate-700 bg-slate-950/60 cursor-pointer'}
                 `}
                 style={{ userSelect: 'none', WebkitUserSelect: 'none' }}
+                onMouseDown={() => !isBlurred && setIsHolding(true)}
+                onMouseUp={() => setIsHolding(false)}
+                onMouseLeave={() => setIsHolding(false)}
+                onTouchStart={() => !isBlurred && setIsHolding(true)}
+                onTouchEnd={() => setIsHolding(false)}
                 onCopy={e => e.preventDefault()}
                 onCut={e => e.preventDefault()}
                 onContextMenu={e => e.preventDefault()}
               >
-                {revealedData.secret}
+                {!isBlurred && isHolding ? (
+                  <div className="w-full text-center py-2 animate-fadeIn">
+                    <span className="text-emerald-400 text-base font-bold tracking-wide break-all">
+                      {revealedData.secret}
+                    </span>
+                    <span className="block mt-2 text-[10px] text-amber-400/90 font-mono">
+                      👆 Release mouse or touch to instantly re-mask
+                    </span>
+                  </div>
+                ) : !isBlurred ? (
+                  <div className="flex flex-col items-center justify-center py-3 gap-2 select-none text-center">
+                    <span className="font-mono text-emerald-400/40 tracking-[0.45em] text-lg font-bold">
+                      {'•'.repeat(Math.max(12, Math.min(revealedData.secret.length || 16, 22)))}
+                    </span>
+                    <div className="mt-1 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs font-semibold shadow-sm active:scale-95 transition-transform">
+                      <Eye className="w-3.5 h-3.5 text-emerald-400" />
+                      Press & Hold to Peek Secret
+                    </div>
+                    <span className="text-[10px] text-slate-500">
+                      Screenshots & shortcut keys automatically conceal secret to dots
+                    </span>
+                  </div>
+                ) : null}
 
                 {/* Overlay when blurred */}
                 {isBlurred && (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-slate-950/80 backdrop-blur-md rounded-xl p-4 text-center">
+                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-slate-950/90 backdrop-blur-md rounded-xl p-4 text-center z-10">
                     <EyeOff className="w-8 h-8 text-red-400" />
                     <span className="text-xs text-red-300 font-semibold">
                       {screenshotAttempted
